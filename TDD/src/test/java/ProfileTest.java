@@ -7,8 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 public class ProfileTest {
     private Profile profile;
-    private Question question;
-    private Answer answer;
+    private Question questionIsThereRelocation;
+    private Answer answerThereIsRelocation;
+    private Answer answerThereIsNotRelocation;
 
     @Before
     public void createProfile() {
@@ -17,15 +18,16 @@ public class ProfileTest {
 
     @Before
     public void createQuestionAndAnswer() {
-        question = new BooleanQuestion(1, "Relocation package?");
-        answer = new Answer(question, Bool.TRUE);
+        questionIsThereRelocation = new BooleanQuestion(1, "Relocation package?");
+        answerThereIsRelocation = new Answer(questionIsThereRelocation, Bool.TRUE);
+        answerThereIsNotRelocation = new Answer(questionIsThereRelocation, Bool.FALSE);
 
     }
 
     @Test
     public void matchesNothingWhenProfileEmpty() {
 
-        Criterion criterion = new Criterion(new Answer(question, Bool.TRUE), Weight.DontCare);
+        Criterion criterion = new Criterion(new Answer(questionIsThereRelocation, Bool.TRUE), Weight.DontCare);
 //
         boolean result = profile.matches(criterion);
 
@@ -35,12 +37,23 @@ public class ProfileTest {
 
     @Test
     public void matchesWhenProfileContainsMatchingAnswer() {
-        profile.add(answer);
-        Criterion criterion = new Criterion(answer, Weight.Important);
+        profile.add(answerThereIsRelocation);
+        Criterion criterion = new Criterion(answerThereIsRelocation, Weight.Important);
 //
         boolean result = profile.matches(criterion);
 
         assertTrue(result);
+
+    }
+
+    @Test
+    public void doesNotmatchWhenNoMatchingAnswer() {
+        profile.add(answerThereIsNotRelocation);
+        Criterion criterion = new Criterion(answerThereIsRelocation, Weight.Important);
+//
+        boolean result = profile.matches(criterion);
+
+        assertFalse(result);
 
     }
 }
