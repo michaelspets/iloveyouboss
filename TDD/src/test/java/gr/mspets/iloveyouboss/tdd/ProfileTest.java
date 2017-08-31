@@ -1,6 +1,5 @@
 package gr.mspets.iloveyouboss.tdd;
 
-import gr.mspets.iloveyouboss.tdd.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ProfileTest {
     private Profile profile;
+    private Criteria criteria;
     private Question questionIsThereRelocation;
     private Answer answerThereIsRelocation;
     private Answer answerThereIsNotRelocation;
@@ -18,6 +18,11 @@ public class ProfileTest {
     @Before
     public void createProfile() {
         profile = new Profile();
+    }
+
+    @Before
+    public void createCriteria() {
+        criteria = new Criteria();
     }
 
     @Before
@@ -61,6 +66,42 @@ public class ProfileTest {
         Criterion criterion = new Criterion(answerThereIsRelocation, Weight.Important);
 //
         boolean result = profile.matches(criterion);
+
+        assertTrue(result);
+
+    }
+
+    @Test
+    public void doesNotMatchWhenNonOfMultipleCriteriaMatch() {
+        profile.add(answerDoesNotReimburseTuition);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+        criteria.add(new Criterion(answerThereIsNotRelocation, Weight.Important));
+//
+        boolean result = profile.matches(criteria);
+
+        assertFalse(result);
+
+    }
+
+    @Test
+    public void doesNotMatchWhenAnyMustMeetCriteriaNotMet() {
+        profile.add(answerDoesNotReimburseTuition);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.MustMatch));
+        criteria.add(new Criterion(answerDoesNotReimburseTuition, Weight.Important));
+//
+        boolean result = profile.matches(criteria);
+
+        assertFalse(result);
+
+    }
+
+    @Test
+    public void matchWhenAnyOfMultipleCriteriaMatch() {
+        profile.add(answerDoesNotReimburseTuition);
+        criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
+        criteria.add(new Criterion(answerDoesNotReimburseTuition, Weight.Important));
+//
+        boolean result = profile.matches(criteria);
 
         assertTrue(result);
 
