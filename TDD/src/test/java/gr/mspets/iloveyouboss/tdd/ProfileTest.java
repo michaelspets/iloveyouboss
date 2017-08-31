@@ -1,3 +1,5 @@
+package gr.mspets.iloveyouboss.tdd;
+
 import gr.mspets.iloveyouboss.tdd.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +12,8 @@ public class ProfileTest {
     private Question questionIsThereRelocation;
     private Answer answerThereIsRelocation;
     private Answer answerThereIsNotRelocation;
+    private BooleanQuestion questionReimbursesTuition;
+    private Answer answerDoesNotReimburseTuition;
 
     @Before
     public void createProfile() {
@@ -21,6 +25,10 @@ public class ProfileTest {
         questionIsThereRelocation = new BooleanQuestion(1, "Relocation package?");
         answerThereIsRelocation = new Answer(questionIsThereRelocation, Bool.TRUE);
         answerThereIsNotRelocation = new Answer(questionIsThereRelocation, Bool.FALSE);
+
+        questionReimbursesTuition = new BooleanQuestion(1, "Reimburses tuition?");
+        answerDoesNotReimburseTuition =
+                new Answer(questionReimbursesTuition, Bool.FALSE);
 
     }
 
@@ -38,6 +46,18 @@ public class ProfileTest {
     @Test
     public void matchesWhenProfileContainsMatchingAnswer() {
         profile.add(answerThereIsRelocation);
+        Criterion criterion = new Criterion(answerThereIsRelocation, Weight.Important);
+//
+        boolean result = profile.matches(criterion);
+
+        assertTrue(result);
+
+    }
+
+    @Test
+    public void matchesWhenContainsMultipleAnswers() {
+        profile.add(answerThereIsRelocation);
+        profile.add(answerDoesNotReimburseTuition);
         Criterion criterion = new Criterion(answerThereIsRelocation, Weight.Important);
 //
         boolean result = profile.matches(criterion);
