@@ -38,13 +38,13 @@ public class ProfileTest {
     }
 
     @Test
-    public void matchesNothingWhenProfileEmpty() {
-
+    public void matchesWhenCriteriaIsDontCare() {
+        profile.add(answerThereIsNotRelocation);
         Criterion criterion = new Criterion(new Answer(questionIsThereRelocation, Bool.TRUE), Weight.DontCare);
 //
         boolean result = profile.matches(criterion);
 
-        assertFalse(result);
+        assertTrue(result);
 
     }
 
