@@ -27,25 +27,42 @@ public class Profile {
     }
 
     public boolean matches(Criteria criteria) {
-        score = 0;
+        calculateCriteria(criteria);
+        if (doesNotMeetAnyMustMatchCriterion(criteria)) {
+            return false;
+        }
+        return anyMatches(criteria);
+    }
 
+    private boolean doesNotMeetAnyMustMatchCriterion(Criteria criteria) {
         boolean kill = false;
-        boolean anyMatches = false;
         for (Criterion criterion : criteria) {
-            Answer answer = answerMatching(criterion);
-            boolean match = criterion.matches(answer);
+            boolean match = criterion.matches(answerMatching(criterion));
             if (!match && criterion.getWeight() == Weight.MustMatch) {
                 kill = true;
             }
-            if (match) {
-                score += criterion.getWeight().getValue();
-            }
-            anyMatches |= match;
-            // ...
         }
         if (kill)
-            return false;
+            return true;
+        return false;
+    }
+
+    private void calculateCriteria(Criteria criteria) {
+        score = 0;
+        for (Criterion criterion : criteria) {
+            if (criterion.matches(answerMatching(criterion))) {
+                score += criterion.getWeight().getValue();
+            }
+        }
+    }
+
+    private boolean anyMatches(Criteria criteria) {
+        boolean anyMatches = false;
+        for (Criterion criterion : criteria) {
+            anyMatches |= criterion.matches(answerMatching(criterion));
+        }
         return anyMatches;
+
     }
 
     private Answer answerMatching(Criterion criterion) {
