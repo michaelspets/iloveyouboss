@@ -10,7 +10,6 @@ public class MatchSet {
     public MatchSet(Map<String, Answer> answers, Criteria criteria) {
         this.answers = answers;
         this.criteria = criteria;
-        calculateScore();
     }
 
     public boolean matches() {
@@ -18,15 +17,6 @@ public class MatchSet {
             return false;
         }
         return anyMatches();
-    }
-
-    private void calculateScore() {
-        score = 0;
-        for (Criterion criterion : criteria) {
-            if (criterion.matches(answerMatching(criterion))) {
-                score += criterion.getWeight().getValue();
-            }
-        }
     }
 
     private boolean doesNotMeetAnyMustMatchCriterion() {
@@ -56,6 +46,12 @@ public class MatchSet {
     }
 
     public int getScore() {
+        score = 0;
+        for (Criterion criterion : criteria) {
+            if (criterion.matches(answerMatching(criterion))) {
+                score += criterion.getWeight().getValue();
+            }
+        }
         return score;
     }
 }
